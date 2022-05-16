@@ -3,7 +3,7 @@
 		<view class="main">
 			<view class="current-coin bg-main">
 				<text>当前金币</text>
-				<text>50</text>
+				<text>{{coin}}</text>
 			</view>
 			<view class="line"></view>
 			<view class="price">
@@ -60,6 +60,11 @@
 				}]
 			}
 		},
+		computed:{
+			coin(){
+				return this.$store.state.user.coin || 0
+			}
+		},
 		onLoad() {
 			this.price = this.list[this.activeIndex].price
 		},
@@ -92,6 +97,7 @@
 	display: flex;
 	width: 100%;
 	align-items: center;
+	flex-direction: column;
 	justify-content: center;
 	color : #fff;
 	margin: 30rpx 0;
