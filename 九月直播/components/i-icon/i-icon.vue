@@ -9,7 +9,7 @@
 			name : String,
 			size : {
 				type : String,
-				default: 32
+				default: "32"
 			},
 			color : {
 				type : String,

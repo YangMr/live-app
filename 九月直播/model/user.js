@@ -11,5 +11,9 @@ class User{
 	static userInfo(){
 		return Http.request({url : "/user/info", method : "GET"})
 	}
+	
+	static logout(){
+		return Http.request({url : "/logout", method : "POST"})
+	}
 }
 export default User

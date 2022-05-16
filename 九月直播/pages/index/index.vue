@@ -51,9 +51,10 @@ export default {
 	filters : {
 		liveStatus(val){
 			const status = {
-				0 : "未开播",
-				1 : "直播中",
-				3 : "已结束"
+				0:"未开始",
+				1:"直播中",
+				2:"暂停",
+				3:"已结束"
 			}
 			return status[val]
 		}
