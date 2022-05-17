@@ -11,8 +11,8 @@
 			</swiper>
 		</div>
 		<div class="live">
-			<div class="live-list" v-for="(item,index) in liveList" :key="index">
-				<image class="cover" :src="item.cover ? item.cover : '../../static/demo/1.jpg'" ></image>
+			<div @click="handleOpenLive" class="live-list" v-for="(item,index) in liveList" :key="index">
+				<image  class="cover" :src="item.cover ? item.cover : '../../static/demo/1.jpg'" ></image>
 				<div class="list-header">
 					<div class="coin">
 						<i-icon name="iconbizhongguanli" size="32" color="#ffd517"></i-icon>
@@ -63,6 +63,11 @@ export default {
 		async getLiveList(){
 			const liveList = await live.reset().getLiveList()
 			this.liveList = liveList
+		},
+		handleOpenLive(){
+			uni.navigateTo({
+				url : "../live/live"
+			})
 		}
 	},
 	async onReachBottom(){

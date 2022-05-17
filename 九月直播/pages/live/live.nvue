@@ -1,0 +1,75 @@
+<template>
+	<view class="page">
+		<video class="video" src="https://tv.cctv.com/670a4d23-cc58-45d8-a1a9-0aab72a1273f" :controls="false" autoplay=""></video>
+		<view class="status-bar "  :style="{top : `${statusBarHeight}px`}">
+			<!-- 个人信息|观看详细信息 -->
+			<view class="bg-danger" style="height:80rpx;"></view>
+			
+			<!-- 金币 -->
+			<view style="width:250rpx; height:80rpx; margin-top:30rpx;" class="bg-primary" ></view>
+
+			
+			<!-- 刷礼物 -->
+			<view  style="height:500rpx;">
+				<view class="bg-success" style="width: 520rpx; height: 500rpx;"></view>
+			</view>
+			
+			<!-- 弹幕 -->
+			<view class="bg-warning" style="width: 520rpx; height: 300rpx; margin-top: 450rpx;"></view>
+		</view>
+		<view class="footer"></view>
+	</view>
+</template>
+
+<script>
+	export default {
+		data() {
+			return {
+				statusBarHeight : 0
+			}
+		},
+		onLoad(){
+			/**
+			 * 获取状态栏的高度
+			 */
+			const res = uni.getSystemInfoSync()
+			this.statusBarHeight = res.statusBarHeight
+			console.log(this.statusBarHeight)
+		},
+		methods: {
+			
+		}
+	}
+</script>
+
+<style>
+.page, .video{
+	flex : 1;
+}
+.status-bar{
+	position: fixed;
+	top : 0;
+	left : 0;
+	right : 0;
+}
+
+.footer{
+	height : 125rpx;
+	/* padding : 0 20rpx; */
+	background-color: yellow;
+	position: fixed;
+	bottom :0;
+	left :0;
+	right : 0;
+}
+.demo {
+	position: absolute;
+	height : 80rpx;
+	width: 80rpx;
+	background-color: red;
+}
+/* text{
+	color : #fff;
+	font-size : 100rpx;
+} */
+</style>

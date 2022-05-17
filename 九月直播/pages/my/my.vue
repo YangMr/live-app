@@ -95,7 +95,7 @@
 				})
 			},
 			handleCoin(){
-				uni.navigateTo({
+				this.authJump({
 					url : "/pages/coin/coin"
 				})
 			}
