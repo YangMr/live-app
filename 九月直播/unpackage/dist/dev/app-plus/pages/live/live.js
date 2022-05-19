@@ -3647,96 +3647,7 @@ if (typeof uni !== 'undefined' && uni && uni.requireGlobal) {
 /* 7 */,
 /* 8 */,
 /* 9 */,
-/* 10 */
-/*!*********************************************************************!*\
-  !*** ./node_modules/@dcloudio/vue-cli-plugin-uni/lib/format-log.js ***!
-  \*********************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });exports.log = log;exports.default = formatLog;function typof(v) {
-  var s = Object.prototype.toString.call(v);
-  return s.substring(8, s.length - 1);
-}
-
-function isDebugMode() {
-  /* eslint-disable no-undef */
-  return typeof __channelId__ === 'string' && __channelId__;
-}
-
-function jsonStringifyReplacer(k, p) {
-  switch (typof(p)) {
-    case 'Function':
-      return 'function() { [native code] }';
-    default:
-      return p;}
-
-}
-
-function log(type) {
-  for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-    args[_key - 1] = arguments[_key];
-  }
-  console[type].apply(console, args);
-}
-
-function formatLog() {
-  for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-    args[_key] = arguments[_key];
-  }
-  var type = args.shift();
-  if (isDebugMode()) {
-    args.push(args.pop().replace('at ', 'uni-app:///'));
-    return console[type].apply(console, args);
-  }
-
-  var msgs = args.map(function (v) {
-    var type = Object.prototype.toString.call(v).toLowerCase();
-
-    if (type === '[object object]' || type === '[object array]') {
-      try {
-        v = '---BEGIN:JSON---' + JSON.stringify(v, jsonStringifyReplacer) + '---END:JSON---';
-      } catch (e) {
-        v = type;
-      }
-    } else {
-      if (v === null) {
-        v = '---NULL---';
-      } else if (v === undefined) {
-        v = '---UNDEFINED---';
-      } else {
-        var vType = typof(v).toUpperCase();
-
-        if (vType === 'NUMBER' || vType === 'BOOLEAN') {
-          v = '---BEGIN:' + vType + '---' + v + '---END:' + vType + '---';
-        } else {
-          v = String(v);
-        }
-      }
-    }
-
-    return v;
-  });
-  var msg = '';
-
-  if (msgs.length > 1) {
-    var lastMsg = msgs.pop();
-    msg = msgs.join('---COMMA---');
-
-    if (lastMsg.indexOf(' at ') === 0) {
-      msg += lastMsg;
-    } else {
-      msg += '---COMMA---' + lastMsg;
-    }
-  } else {
-    msg = msgs[0];
-  }
-
-  console[type](msg);
-}
-
-/***/ }),
+/* 10 */,
 /* 11 */
 /*!**********************************************************************************************************!*\
   !*** ./node_modules/@dcloudio/vue-cli-plugin-uni/packages/vue-loader/lib/runtime/componentNormalizer.js ***!
@@ -3945,47 +3856,281 @@ var render = function() {
           _c("u-video", {
             staticClass: ["video"],
             attrs: {
-              src: "https://tv.cctv.com/670a4d23-cc58-45d8-a1a9-0aab72a1273f",
+              src:
+                "http://stream10.fjtv.net/cctv1/playlist.m3u8?_upt=71da62d61652937716",
               controls: false,
-              autoplay: ""
+              autoplay: true
             }
           }),
           _c(
             "view",
             {
-              staticClass: ["status-bar"],
+              staticClass: [
+                "text-white",
+                "position-fixed",
+                "left-0",
+                "right-0"
+              ],
               style: { top: _vm.statusBarHeight + "px" }
             },
             [
               _c("view", {
-                staticClass: ["bg-danger"],
-                staticStyle: { height: "80rpx" }
+                staticClass: [
+                  "position-relative",
+                  "left-0",
+                  "right-0",
+                  "bg-danger"
+                ],
+                staticStyle: { height: "70rpx" }
               }),
               _c("view", {
-                staticClass: ["bg-primary"],
+                staticClass: ["bg-main"],
                 staticStyle: {
-                  width: "250rpx",
-                  height: "80rpx",
-                  marginTop: "30rpx"
+                  height: "60rpx",
+                  marginTop: "25rpx",
+                  width: "250rpx"
                 }
               }),
-              _c("view", { staticStyle: { height: "500rpx" } }, [
-                _c("view", {
-                  staticClass: ["bg-success"],
-                  staticStyle: { width: "520rpx", height: "500rpx" }
-                })
-              ]),
               _c("view", {
-                staticClass: ["bg-warning"],
-                staticStyle: {
-                  width: "520rpx",
-                  height: "300rpx",
-                  marginTop: "450rpx"
-                }
-              })
+                staticClass: ["bg-dark", "mt-2"],
+                staticStyle: { height: "440rpx", width: "400rpx" }
+              }),
+              _c(
+                "view",
+                {
+                  staticClass: ["position-fixed"],
+                  staticStyle: {
+                    width: "505rpx",
+                    height: "300rpx",
+                    bottom: "130rpx",
+                    left: "15rpx",
+                    right: "15rpx"
+                  }
+                },
+                _vm._l(10, function(item, index) {
+                  return _c(
+                    "view",
+                    {
+                      key: index,
+                      staticClass: [
+                        "rounded",
+                        "mt-2",
+                        "flex",
+                        "align-center",
+                        "px-2"
+                      ],
+                      staticStyle: {
+                        width: "505rpx",
+                        backgroundColor: "rgba(255,255,255,0.3)"
+                      }
+                    },
+                    [
+                      _c(
+                        "view",
+                        {
+                          staticClass: ["flex"],
+                          staticStyle: {
+                            maxWidth: "130rpx",
+                            minWidth: "65rpx",
+                            minHeight: "75rpx"
+                          }
+                        },
+                        [
+                          _c(
+                            "u-text",
+                            {
+                              staticClass: [
+                                "text-danger",
+                                "font",
+                                "text-ellipsis"
+                              ],
+                              appendAsTree: true,
+                              attrs: { append: "tree" }
+                            },
+                            [_vm._v("帅哥:")]
+                          )
+                        ]
+                      ),
+                      _c("view", { staticClass: ["flex-1"] }, [
+                        _c(
+                          "u-text",
+                          {
+                            staticClass: ["text-white", "font"],
+                            staticStyle: { whiteSpace: "nowrap" },
+                            appendAsTree: true,
+                            attrs: { append: "tree" }
+                          },
+                          [
+                            _vm._v(
+                              "老师早上好 老师早上好老师早上好老师早上好老师早上好"
+                            )
+                          ]
+                        )
+                      ])
+                    ]
+                  )
+                }),
+                0
+              )
             ]
           ),
-          _c("view", { staticClass: ["footer"] })
+          _c(
+            "view",
+            {
+              staticClass: [
+                "position-fixed",
+                "bottom-0",
+                "flex",
+                "align-center",
+                "justify-between"
+              ],
+              staticStyle: {
+                height: "130rpx",
+                boxSizing: "border-box",
+                left: "15rpx",
+                right: "15rpx"
+              }
+            },
+            [
+              _c(
+                "view",
+                {
+                  staticClass: ["flex", "align-center", "justify-center"],
+                  staticStyle: {
+                    width: "195rpx",
+                    height: "80rpx",
+                    backgroundColor: "rgba(255,255,255,0.1)",
+                    borderRadius: "40rpx"
+                  }
+                },
+                [
+                  _c(
+                    "u-text",
+                    {
+                      staticClass: ["font", "text-white"],
+                      appendAsTree: true,
+                      attrs: { append: "tree" }
+                    },
+                    [_vm._v("说点什么...")]
+                  )
+                ]
+              ),
+              _c("view", { staticClass: ["flex", "align-center"] }, [
+                _c(
+                  "view",
+                  {
+                    staticClass: [
+                      "flex",
+                      "mr-1",
+                      "justify-center",
+                      "",
+                      "rounded-circle",
+                      "align-center"
+                    ],
+                    staticStyle: {
+                      height: "80rpx",
+                      width: "80rpx",
+                      backgroundColor: "rgba(255,255,255,0.12)"
+                    }
+                  },
+                  [
+                    _c(
+                      "u-text",
+                      {
+                        staticClass: ["iconfont", "text-white"],
+                        staticStyle: { fontSize: "40px" },
+                        appendAsTree: true,
+                        attrs: { append: "tree" }
+                      },
+                      [_vm._v("")]
+                    )
+                  ]
+                ),
+                _c(
+                  "view",
+                  {
+                    staticClass: [
+                      "flex",
+                      "mr-1",
+                      "justify-center",
+                      "rounded-circle",
+                      "align-center",
+                      "bg-warning"
+                    ],
+                    staticStyle: { height: "80rpx", width: "80rpx" }
+                  },
+                  [
+                    _c(
+                      "u-text",
+                      {
+                        staticClass: ["iconfont"],
+                        appendAsTree: true,
+                        attrs: { append: "tree" }
+                      },
+                      [_vm._v("")]
+                    )
+                  ]
+                ),
+                _c(
+                  "view",
+                  {
+                    staticClass: [
+                      "flex",
+                      "mr-1",
+                      "justify-center",
+                      "",
+                      "rounded-circle",
+                      "align-center"
+                    ],
+                    staticStyle: {
+                      height: "80rpx",
+                      width: "80rpx",
+                      backgroundColor: "rgba(255,255,255,0.12)"
+                    }
+                  },
+                  [
+                    _c(
+                      "u-text",
+                      {
+                        staticClass: ["iconfont", "text-white"],
+                        appendAsTree: true,
+                        attrs: { append: "tree" }
+                      },
+                      [_vm._v("")]
+                    )
+                  ]
+                ),
+                _c(
+                  "view",
+                  {
+                    staticClass: [
+                      "flex",
+                      "mr-1",
+                      "justify-center",
+                      "rounded-circle",
+                      "align-center"
+                    ],
+                    staticStyle: {
+                      height: "80rpx",
+                      width: "80rpx",
+                      backgroundColor: "rgba(255,255,255,0.12)"
+                    }
+                  },
+                  [
+                    _c(
+                      "u-text",
+                      {
+                        staticClass: ["iconfont", "text-white"],
+                        appendAsTree: true,
+                        attrs: { append: "tree" }
+                      },
+                      [_vm._v("")]
+                    )
+                  ]
+                )
+              ])
+            ]
+          )
         ],
         1
       )
@@ -4018,7 +4163,7 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _App
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("/* WEBPACK VAR INJECTION */(function(__f__) {Object.defineProperty(exports, \"__esModule\", { value: true });exports.default = void 0; //\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\nvar _default =\n{\n  data: function data() {\n    return {\n      statusBarHeight: 0 };\n\n  },\n  onLoad: function onLoad() {\n    /**\n                              * 获取状态栏的高度\n                              */\n    var res = uni.getSystemInfoSync();\n    this.statusBarHeight = res.statusBarHeight;\n    __f__(\"log\", this.statusBarHeight, \" at pages/live/live.nvue:37\");\n  },\n  methods: {} };exports.default = _default;\n/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/vue-cli-plugin-uni/lib/format-log.js */ 10)[\"default\"]))//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInVuaS1hcHA6Ly8vcGFnZXMvbGl2ZS9saXZlLm52dWUiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7O0FBd0JBO0FBQ0EsTUFEQSxrQkFDQTtBQUNBO0FBQ0Esd0JBREE7O0FBR0EsR0FMQTtBQU1BLFFBTkEsb0JBTUE7QUFDQTs7O0FBR0E7QUFDQTtBQUNBO0FBQ0EsR0FiQTtBQWNBLGFBZEEsRSIsImZpbGUiOiIxNy5qcyIsInNvdXJjZXNDb250ZW50IjpbIjx0ZW1wbGF0ZT5cblx0PHZpZXcgY2xhc3M9XCJwYWdlXCI+XG5cdFx0PHZpZGVvIGNsYXNzPVwidmlkZW9cIiBzcmM9XCJodHRwczovL3R2LmNjdHYuY29tLzY3MGE0ZDIzLWNjNTgtNDVkOC1hMWE5LTBhYWI3MmExMjczZlwiIDpjb250cm9scz1cImZhbHNlXCIgYXV0b3BsYXk9XCJcIj48L3ZpZGVvPlxuXHRcdDx2aWV3IGNsYXNzPVwic3RhdHVzLWJhciBcIiAgOnN0eWxlPVwie3RvcCA6IGAke3N0YXR1c0JhckhlaWdodH1weGB9XCI+XG5cdFx0XHQ8IS0tIOS4quS6uuS/oeaBr3zop4LnnIvor6bnu4bkv6Hmga8gLS0+XG5cdFx0XHQ8dmlldyBjbGFzcz1cImJnLWRhbmdlclwiIHN0eWxlPVwiaGVpZ2h0OjgwcnB4O1wiPjwvdmlldz5cblx0XHRcdFxuXHRcdFx0PCEtLSDph5HluIEgLS0+XG5cdFx0XHQ8dmlldyBzdHlsZT1cIndpZHRoOjI1MHJweDsgaGVpZ2h0OjgwcnB4OyBtYXJnaW4tdG9wOjMwcnB4O1wiIGNsYXNzPVwiYmctcHJpbWFyeVwiID48L3ZpZXc+XG5cblx0XHRcdFxuXHRcdFx0PCEtLSDliLfnpLzniakgLS0+XG5cdFx0XHQ8dmlldyAgc3R5bGU9XCJoZWlnaHQ6NTAwcnB4O1wiPlxuXHRcdFx0XHQ8dmlldyBjbGFzcz1cImJnLXN1Y2Nlc3NcIiBzdHlsZT1cIndpZHRoOiA1MjBycHg7IGhlaWdodDogNTAwcnB4O1wiPjwvdmlldz5cblx0XHRcdDwvdmlldz5cblx0XHRcdFxuXHRcdFx0PCEtLSDlvLnluZUgLS0+XG5cdFx0XHQ8dmlldyBjbGFzcz1cImJnLXdhcm5pbmdcIiBzdHlsZT1cIndpZHRoOiA1MjBycHg7IGhlaWdodDogMzAwcnB4OyBtYXJnaW4tdG9wOiA0NTBycHg7XCI+PC92aWV3PlxuXHRcdDwvdmlldz5cblx0XHQ8dmlldyBjbGFzcz1cImZvb3RlclwiPjwvdmlldz5cblx0PC92aWV3PlxuPC90ZW1wbGF0ZT5cblxuPHNjcmlwdD5cblx0ZXhwb3J0IGRlZmF1bHQge1xuXHRcdGRhdGEoKSB7XG5cdFx0XHRyZXR1cm4ge1xuXHRcdFx0XHRzdGF0dXNCYXJIZWlnaHQgOiAwXG5cdFx0XHR9XG5cdFx0fSxcblx0XHRvbkxvYWQoKXtcblx0XHRcdC8qKlxuXHRcdFx0ICog6I635Y+W54q25oCB5qCP55qE6auY5bqmXG5cdFx0XHQgKi9cblx0XHRcdGNvbnN0IHJlcyA9IHVuaS5nZXRTeXN0ZW1JbmZvU3luYygpXG5cdFx0XHR0aGlzLnN0YXR1c0JhckhlaWdodCA9IHJlcy5zdGF0dXNCYXJIZWlnaHRcblx0XHRcdGNvbnNvbGUubG9nKHRoaXMuc3RhdHVzQmFySGVpZ2h0KVxuXHRcdH0sXG5cdFx0bWV0aG9kczoge1xuXHRcdFx0XG5cdFx0fVxuXHR9XG48L3NjcmlwdD5cblxuPHN0eWxlPlxuLnBhZ2UsIC52aWRlb3tcblx0ZmxleCA6IDE7XG59XG4uc3RhdHVzLWJhcntcblx0cG9zaXRpb246IGZpeGVkO1xuXHR0b3AgOiAwO1xuXHRsZWZ0IDogMDtcblx0cmlnaHQgOiAwO1xufVxuXG4uZm9vdGVye1xuXHRoZWlnaHQgOiAxMjVycHg7XG5cdC8qIHBhZGRpbmcgOiAwIDIwcnB4OyAqL1xuXHRiYWNrZ3JvdW5kLWNvbG9yOiB5ZWxsb3c7XG5cdHBvc2l0aW9uOiBmaXhlZDtcblx0Ym90dG9tIDowO1xuXHRsZWZ0IDowO1xuXHRyaWdodCA6IDA7XG59XG4uZGVtbyB7XG5cdHBvc2l0aW9uOiBhYnNvbHV0ZTtcblx0aGVpZ2h0IDogODBycHg7XG5cdHdpZHRoOiA4MHJweDtcblx0YmFja2dyb3VuZC1jb2xvcjogcmVkO1xufVxuLyogdGV4dHtcblx0Y29sb3IgOiAjZmZmO1xuXHRmb250LXNpemUgOiAxMDBycHg7XG59ICovXG48L3N0eWxlPlxuIl0sInNvdXJjZVJvb3QiOiIifQ==\n//# sourceURL=webpack-internal:///17\n");
+eval("Object.defineProperty(exports, \"__esModule\", { value: true });exports.default = void 0; //\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\n//\nvar _default =\n{\n  data: function data() {\n    return {\n      statusBarHeight: 0 };\n\n  },\n  onLoad: function onLoad() {\n    // 获取状态栏的高度\n    var res = uni.getSystemInfoSync();\n    this.statusBarHeight = res.statusBarHeight;\n  },\n  methods: {} };exports.default = _default;//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInVuaS1hcHA6Ly8vcGFnZXMvbGl2ZS9saXZlLm52dWUiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7O0FBeURBO0FBQ0EsTUFEQSxrQkFDQTtBQUNBO0FBQ0Esd0JBREE7O0FBR0EsR0FMQTtBQU1BLFFBTkEsb0JBTUE7QUFDQTtBQUNBO0FBQ0E7QUFDQSxHQVZBO0FBV0EsYUFYQSxFIiwiZmlsZSI6IjE3LmpzIiwic291cmNlc0NvbnRlbnQiOlsiPHRlbXBsYXRlPlxyXG5cdDx2aWV3IGNsYXNzPVwicGFnZVwiPlxyXG5cdFx0PHZpZGVvIGNsYXNzPVwidmlkZW9cIiBzcmM9XCJodHRwOi8vc3RyZWFtMTAuZmp0di5uZXQvY2N0djEvcGxheWxpc3QubTN1OD9fdXB0PTcxZGE2MmQ2MTY1MjkzNzcxNlwiXHJcblx0XHRcdDpjb250cm9scz1cImZhbHNlXCIgYXV0b3BsYXk+PC92aWRlbz5cclxuXHRcdDx2aWV3IDpzdHlsZT1cInsndG9wJyA6IHN0YXR1c0JhckhlaWdodCArICdweCd9XCIgY2xhc3M9XCJ0ZXh0LXdoaXRlIHBvc2l0aW9uLWZpeGVkIGxlZnQtMCByaWdodC0wXCI+XHJcblx0XHRcdDwhLS0g5Liq5Lq65L+h5oGvfOingueci+S6uuaVsCAtLT5cclxuXHRcdFx0PHZpZXcgc3R5bGU9XCJoZWlnaHQ6NzBycHg7IFwiIGNsYXNzPVwicG9zaXRpb24tcmVsYXRpdmUgbGVmdC0wIHJpZ2h0LTAgYmctZGFuZ2VyXCI+PC92aWV3PlxyXG5cclxuXHRcdFx0PCEtLSDnlKjmiLfph5HluIHmlbAgLS0+XHJcblx0XHRcdDx2aWV3IHN0eWxlPVwiaGVpZ2h0OjYwcnB4OyBtYXJnaW4tdG9wOjI1cnB4O3dpZHRoOiAyNTBycHg7XCIgY2xhc3M9XCJiZy1tYWluXCI+PC92aWV3PlxyXG5cclxuXHRcdFx0PCEtLSDnpLznianljLrln58gLS0+XHJcblx0XHRcdDx2aWV3IHN0eWxlPVwiaGVpZ2h0IDogNDQwcnB4OyB3aWR0aCA6IDQwMHJweCBcIiBjbGFzcz1cImJnLWRhcmsgbXQtMlwiPjwvdmlldz5cclxuXHJcblx0XHRcdDwhLS0g5by55bmV5Yy65Z+fIC0tPlxyXG5cdFx0XHQ8dmlldyBzdHlsZT1cIndpZHRoOjUwNXJweDtoZWlnaHQ6IDMwMHJweDsgYm90dG9tOjEzMHJweDsgbGVmdDoxNXJweDsgcmlnaHQ6MTVycHg7XCIgY2xhc3M9XCJwb3NpdGlvbi1maXhlZFwiPlxuXHRcdFx0XHQ8dmlldyB2LWZvcj1cIihpdGVtLGluZGV4KSBpbiAxMFwiIDprZXk9XCJpbmRleFwiIGNsYXNzPVwicm91bmRlZCBtdC0yIGZsZXggYWxpZ24tY2VudGVyIHB4LTJcIiBzdHlsZT1cIiB3aWR0aDo1MDVycHg7YmFja2dyb3VuZC1jb2xvcjogcmdiYSgyNTUsMjU1LDI1NSwwLjMpO1wiPlxuXHRcdFx0XHRcdDx2aWV3ICBjbGFzcz1cImZsZXhcIiBzdHlsZT1cIm1heC13aWR0aDogMTMwcnB4OyAgbWluLXdpZHRoOiA2NXJweDsgbWluLWhlaWdodCA6NzVycHg7XCI+XG5cdFx0XHRcdFx0XHQ8dGV4dCBjbGFzcz1cInRleHQtZGFuZ2VyIGZvbnQgdGV4dC1lbGxpcHNpc1wiPuW4heWTpTo8L3RleHQ+XG5cdFx0XHRcdFx0PC92aWV3PlxuXHRcdFx0XHRcdDx2aWV3IGNsYXNzPVwiZmxleC0xXCI+XG5cdFx0XHRcdFx0XHQ8dGV4dCBjbGFzcz1cInRleHQtd2hpdGUgZm9udFwiIHN0eWxlPVwid2hpdGUtc3BhY2U6IG5vd3JhcDtcIj7ogIHluIjml6nkuIrlpb0g6ICB5biI5pep5LiK5aW96ICB5biI5pep5LiK5aW96ICB5biI5pep5LiK5aW96ICB5biI5pep5LiK5aW9PC90ZXh0PlxuXHRcdFx0XHRcdDwvdmlldz5cblx0XHRcdFx0PC92aWV3PlxuXHRcdFx0XG5cdFx0XHQ8L3ZpZXc+XHJcblx0XHQ8L3ZpZXc+XG5cdFx0XHJcblx0XHQ8dmlldyBjbGFzcz1cInBvc2l0aW9uLWZpeGVkIGJvdHRvbS0wIGZsZXggYWxpZ24tY2VudGVyIGp1c3RpZnktYmV0d2VlblwiXHJcblx0XHRcdHN0eWxlPVwiaGVpZ2h0IDogMTMwcnB4OyAgYm94LXNpemluZzogYm9yZGVyLWJveDsgbGVmdCA6IDE1cnB4OyByaWdodDogMTVycHg7XCI+XHJcblx0XHRcdDx2aWV3IGNsYXNzPVwiZmxleCBhbGlnbi1jZW50ZXIganVzdGlmeS1jZW50ZXJcIlxyXG5cdFx0XHRcdHN0eWxlPVwid2lkdGg6MTk1cnB4OyBoZWlnaHQgOjgwcnB4O2JhY2tncm91bmQtY29sb3I6IHJnYmEoMjU1LDI1NSwyNTUsMC4xKTtib3JkZXItcmFkaXVzOiA0MHJweDtcIj5cclxuXHRcdFx0XHQ8dGV4dCBjbGFzcz1cImZvbnQgdGV4dC13aGl0ZVwiPuivtOeCueS7gOS5iC4uLjwvdGV4dD5cclxuXHRcdFx0PC92aWV3PlxyXG5cdFx0XHQ8dmlldyBjbGFzcz1cImZsZXggYWxpZ24tY2VudGVyXCI+XHJcblx0XHRcdFx0PHZpZXcgc3R5bGU9XCJoZWlnaHQ6ODBycHg7IHdpZHRoOiA4MHJweDsgYmFja2dyb3VuZC1jb2xvcjogcmdiYSgyNTUsMjU1LDI1NSwwLjEyKTtcIlxyXG5cdFx0XHRcdFx0Y2xhc3M9XCJmbGV4IG1yLTEganVzdGlmeS1jZW50ZXIgIHJvdW5kZWQtY2lyY2xlIGFsaWduLWNlbnRlclwiPlxyXG5cdFx0XHRcdFx0PHRleHQgY2xhc3M9XCJpY29uZm9udCB0ZXh0LXdoaXRlXCIgc3R5bGU9XCJmb250LXNpemU6IDQwcHg7IFwiPiYjeGU2MzM7PC90ZXh0PlxyXG5cdFx0XHRcdDwvdmlldz5cclxuXHRcdFx0XHQ8dmlldyBzdHlsZT1cImhlaWdodDo4MHJweDsgd2lkdGg6IDgwcnB4O1wiXHJcblx0XHRcdFx0XHRjbGFzcz1cImZsZXggbXItMSBqdXN0aWZ5LWNlbnRlciByb3VuZGVkLWNpcmNsZSBhbGlnbi1jZW50ZXIgYmctd2FybmluZ1wiPlxyXG5cdFx0XHRcdFx0PHRleHQgY2xhc3M9XCJpY29uZm9udFwiPiYjeGU2N2M7PC90ZXh0PlxyXG5cdFx0XHRcdDwvdmlldz5cclxuXHRcdFx0XHQ8dmlldyBzdHlsZT1cImhlaWdodDo4MHJweDsgd2lkdGg6IDgwcnB4OyBiYWNrZ3JvdW5kLWNvbG9yOiByZ2JhKDI1NSwyNTUsMjU1LDAuMTIpO1wiXHJcblx0XHRcdFx0XHRjbGFzcz1cImZsZXggbXItMSBqdXN0aWZ5LWNlbnRlciAgcm91bmRlZC1jaXJjbGUgYWxpZ24tY2VudGVyXCI+XHJcblx0XHRcdFx0XHQ8dGV4dCBjbGFzcz1cImljb25mb250IHRleHQtd2hpdGVcIj4mI3hlN2NkOzwvdGV4dD5cclxuXHRcdFx0XHQ8L3ZpZXc+XHJcblx0XHRcdFx0PHZpZXcgc3R5bGU9XCJoZWlnaHQ6ODBycHg7IHdpZHRoOiA4MHJweDsgYmFja2dyb3VuZC1jb2xvcjogcmdiYSgyNTUsMjU1LDI1NSwwLjEyKTtcIlxyXG5cdFx0XHRcdFx0Y2xhc3M9XCJmbGV4IG1yLTEganVzdGlmeS1jZW50ZXIgcm91bmRlZC1jaXJjbGUgYWxpZ24tY2VudGVyXCI+XHJcblx0XHRcdFx0XHQ8dGV4dCBjbGFzcz1cImljb25mb250IHRleHQtd2hpdGVcIj4mI3hlNjA3OzwvdGV4dD5cclxuXHRcdFx0XHQ8L3ZpZXc+XHJcblx0XHRcdDwvdmlldz5cclxuXHRcdDwvdmlldz5cclxuXHQ8L3ZpZXc+XHJcbjwvdGVtcGxhdGU+XHJcblxyXG48c2NyaXB0PlxyXG5cdGV4cG9ydCBkZWZhdWx0IHtcclxuXHRcdGRhdGEoKSB7XHJcblx0XHRcdHJldHVybiB7XHJcblx0XHRcdFx0c3RhdHVzQmFySGVpZ2h0OiAwXHJcblx0XHRcdH1cclxuXHRcdH0sXHJcblx0XHRvbkxvYWQoKSB7XHJcblx0XHRcdC8vIOiOt+WPlueKtuaAgeagj+eahOmrmOW6plxyXG5cdFx0XHRjb25zdCByZXMgPSB1bmkuZ2V0U3lzdGVtSW5mb1N5bmMoKVxyXG5cdFx0XHR0aGlzLnN0YXR1c0JhckhlaWdodCA9IHJlcy5zdGF0dXNCYXJIZWlnaHRcclxuXHRcdH0sXHJcblx0XHRtZXRob2RzOiB7XHJcblxyXG5cdFx0fVxyXG5cdH1cclxuPC9zY3JpcHQ+XHJcblxyXG48c3R5bGU+XHJcblx0LnBhZ2UsXHJcblx0LnZpZGVvIHtcclxuXHRcdGZsZXg6IDE7XHJcblx0fVxyXG5cclxuXHQuc3RhdHVzLWJhciB7XHJcblx0XHRwb3NpdGlvbjogZml4ZWQ7XHJcblx0XHR0b3A6IDA7XHJcblx0XHRsZWZ0OiAwO1xyXG5cdFx0cmlnaHQ6IDA7XHJcblx0fVxyXG5cclxuXHQuZm9vdGVyIHtcclxuXHRcdGhlaWdodDogMTI1cnB4O1xyXG5cdFx0LyogcGFkZGluZyA6IDAgMjBycHg7ICovXHJcblx0XHRiYWNrZ3JvdW5kLWNvbG9yOiB5ZWxsb3c7XHJcblx0XHRwb3NpdGlvbjogZml4ZWQ7XHJcblx0XHRib3R0b206IDA7XHJcblx0XHRsZWZ0OiAwO1xyXG5cdFx0cmlnaHQ6IDA7XHJcblx0fVxyXG5cclxuXHQuZGVtbyB7XHJcblx0XHRwb3NpdGlvbjogYWJzb2x1dGU7XHJcblx0XHRoZWlnaHQ6IDgwcnB4O1xyXG5cdFx0d2lkdGg6IDgwcnB4O1xyXG5cdFx0YmFja2dyb3VuZC1jb2xvcjogcmVkO1xyXG5cdH1cclxuXHJcblx0LyogdGV4dHtcclxuXHRjb2xvciA6ICNmZmY7XHJcblx0Zm9udC1zaXplIDogMTAwcnB4O1xyXG59ICovXHJcbjwvc3R5bGU+XG4iXSwic291cmNlUm9vdCI6IiJ9\n//# sourceURL=webpack-internal:///17\n");
 
 /***/ }),
 /* 18 */

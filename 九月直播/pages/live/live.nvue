@@ -1,23 +1,56 @@
 <template>
 	<view class="page">
-		<video class="video" src="https://tv.cctv.com/670a4d23-cc58-45d8-a1a9-0aab72a1273f" :controls="false" autoplay=""></video>
-		<view class="status-bar "  :style="{top : `${statusBarHeight}px`}">
-			<!-- 个人信息|观看详细信息 -->
-			<view class="bg-danger" style="height:80rpx;"></view>
-			
-			<!-- 金币 -->
-			<view style="width:250rpx; height:80rpx; margin-top:30rpx;" class="bg-primary" ></view>
+		<video class="video" src="http://stream10.fjtv.net/cctv1/playlist.m3u8?_upt=71da62d61652937716"
+			:controls="false" autoplay></video>
+		<view :style="{'top' : statusBarHeight + 'px'}" class="text-white position-fixed left-0 right-0">
+			<!-- 个人信息|观看人数 -->
+			<view style="height:70rpx; " class="position-relative left-0 right-0 bg-danger"></view>
 
+			<!-- 用户金币数 -->
+			<view style="height:60rpx; margin-top:25rpx;width: 250rpx;" class="bg-main"></view>
+
+			<!-- 礼物区域 -->
+			<view style="height : 440rpx; width : 400rpx " class="bg-dark mt-2"></view>
+
+			<!-- 弹幕区域 -->
+			<view style="width:505rpx;height: 300rpx; bottom:130rpx; left:15rpx; right:15rpx;" class="position-fixed">
+				<view v-for="(item,index) in 10" :key="index" class="rounded mt-2 flex align-center px-2" style=" width:505rpx;background-color: rgba(255,255,255,0.3);">
+					<view  class="flex" style="max-width: 130rpx;  min-width: 65rpx; min-height :75rpx;">
+						<text class="text-danger font text-ellipsis">帅哥:</text>
+					</view>
+					<view class="flex-1">
+						<text class="text-white font" style="white-space: nowrap;">老师早上好 老师早上好老师早上好老师早上好老师早上好</text>
+					</view>
+				</view>
 			
-			<!-- 刷礼物 -->
-			<view  style="height:500rpx;">
-				<view class="bg-success" style="width: 520rpx; height: 500rpx;"></view>
 			</view>
-			
-			<!-- 弹幕 -->
-			<view class="bg-warning" style="width: 520rpx; height: 300rpx; margin-top: 450rpx;"></view>
 		</view>
-		<view class="footer"></view>
+		
+		<view class="position-fixed bottom-0 flex align-center justify-between"
+			style="height : 130rpx;  box-sizing: border-box; left : 15rpx; right: 15rpx;">
+			<view class="flex align-center justify-center"
+				style="width:195rpx; height :80rpx;background-color: rgba(255,255,255,0.1);border-radius: 40rpx;">
+				<text class="font text-white">说点什么...</text>
+			</view>
+			<view class="flex align-center">
+				<view style="height:80rpx; width: 80rpx; background-color: rgba(255,255,255,0.12);"
+					class="flex mr-1 justify-center  rounded-circle align-center">
+					<text class="iconfont text-white" style="font-size: 40px; ">&#xe633;</text>
+				</view>
+				<view style="height:80rpx; width: 80rpx;"
+					class="flex mr-1 justify-center rounded-circle align-center bg-warning">
+					<text class="iconfont">&#xe67c;</text>
+				</view>
+				<view style="height:80rpx; width: 80rpx; background-color: rgba(255,255,255,0.12);"
+					class="flex mr-1 justify-center  rounded-circle align-center">
+					<text class="iconfont text-white">&#xe7cd;</text>
+				</view>
+				<view style="height:80rpx; width: 80rpx; background-color: rgba(255,255,255,0.12);"
+					class="flex mr-1 justify-center rounded-circle align-center">
+					<text class="iconfont text-white">&#xe607;</text>
+				</view>
+			</view>
+		</view>
 	</view>
 </template>
 
@@ -25,50 +58,51 @@
 	export default {
 		data() {
 			return {
-				statusBarHeight : 0
+				statusBarHeight: 0
 			}
 		},
-		onLoad(){
-			/**
-			 * 获取状态栏的高度
-			 */
+		onLoad() {
+			// 获取状态栏的高度
 			const res = uni.getSystemInfoSync()
 			this.statusBarHeight = res.statusBarHeight
-			console.log(this.statusBarHeight)
 		},
 		methods: {
-			
+
 		}
 	}
 </script>
 
 <style>
-.page, .video{
-	flex : 1;
-}
-.status-bar{
-	position: fixed;
-	top : 0;
-	left : 0;
-	right : 0;
-}
+	.page,
+	.video {
+		flex: 1;
+	}
 
-.footer{
-	height : 125rpx;
-	/* padding : 0 20rpx; */
-	background-color: yellow;
-	position: fixed;
-	bottom :0;
-	left :0;
-	right : 0;
-}
-.demo {
-	position: absolute;
-	height : 80rpx;
-	width: 80rpx;
-	background-color: red;
-}
-/* text{
+	.status-bar {
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+	}
+
+	.footer {
+		height: 125rpx;
+		/* padding : 0 20rpx; */
+		background-color: yellow;
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		right: 0;
+	}
+
+	.demo {
+		position: absolute;
+		height: 80rpx;
+		width: 80rpx;
+		background-color: red;
+	}
+
+	/* text{
 	color : #fff;
 	font-size : 100rpx;
 } */
