@@ -1,0 +1,291 @@
+<template>
+	<view>
+		<live-pusher
+			id="livePusher"
+			ref="livePusher"
+			class="livePusher"
+			:url="url"
+			:mode="mode"
+			:muted="muted"
+			:enable-camera="enableCamera"
+			:auto-focus="autoFocus"
+			:beauty="beauty"
+			whiteness="whiteness"
+			:device-position="devicePosition"
+			@statechange="statechange"
+			@netstatus="netstatus"
+			@error="error"
+			:style="{ 'height' : windowHeight + 'px'  }"
+			style="width:750rpx;"
+		></live-pusher>
+		
+		<view v-if="showBars">
+			<view class="preview" :style="{'top' : statusBarHeight + 'px'}">
+					<!-- 关闭创建直播间 -->
+					<view class="close" @click="handleCloseCreateLive">
+						<text class="iconfont ">&#xe607;</text>
+					</view>
+					
+					<!-- 直播间标题区域 -->
+					<view class="live-title">
+						<view class="cover position-relative">
+							<image style="height:120rpx;width: 120rpx;" class="cover-image" src="/static/gift/3.png" ></image>
+							<text style="left :0; right :0; bottom: 0;" class="text-white position-absolute font">更换封面</text>
+						</view>
+						<view class="title flex-1 ml-2 flex flex-column justify-center">
+							<input class="mb-2 text-white " type="text" placeholder="请输入直播间标题"/>
+							<text class="text-white font"># 请选择分类</text>
+						</view>
+					</view>
+					
+					<!-- 工具栏区域 -->
+					<view class="flex flex-column align-center position-absolute right-0" >
+						<view @click="handleSwitchCamera" style="width:100rpx; height :120rpx;" class="flex flex-column align-center justify-center">
+							<text class="iconfont text-white mb-1">&#xe605;</text>
+							<text class="text-white font">翻转</text>
+						</view>
+						<view @click="handleOpenPopup('mode')" style="width:100rpx; height :120rpx;" class="flex flex-column align-center justify-center">
+							<text class="iconfont text-white mb-1">&#xe60c;</text>
+							<text class="text-white font">画质</text>
+						</view>
+						<view @click="handleOpenPopup('beauty')" style="width:100rpx; height :120rpx;" class="flex flex-column align-center justify-center">
+							<text class="iconfont text-white mb-1">&#xe632;</text>
+							<text class="text-white font">美颜</text>
+						</view>
+						<view @click="handleOpenPopup('whiteness')" style="width:100rpx; height :120rpx;" class="flex flex-column align-center justify-center ">
+							<text class="iconfont text-white mb-1">&#xe631;</text>
+							<text class="text-white font">美白</text>
+						</view>
+						
+					</view>
+				</view>
+			
+			
+				<!-- 开启直播按钮区域 -->
+				<view @click="handleOpenLive" class="position-fixed bg-main flex align-center justify-center rounded-circle" style="left : 100rpx; right : 100rpx; bottom: 100rpx; height : 120rpx;">
+					<text class="text-white font-md ">开始视频直播</text>
+				</view>
+				
+				<!-- 弹出层 -->
+				<uni-popup ref="popup" type="bottom">
+					<view class="bg-white">
+						<view class="flex border-bottom justify-center align-center" style="height : 90rpx;">
+							<text class="font">{{popupTitle}}</text>
+						</view>
+						
+						<!-- 画质 -->
+						<view v-if="popupType === 'mode'">
+							<view @click="handleChooseMode(item)" v-for="(item,index) in modeList" :key="index" :class="mode === item.type ? 'bg-main' : ''" class="flex align-center justify-center py-2" >
+								<text class="font-md" :class="mode === item.type ? 'text-white': ''">{{item.desc}}</text>
+							</view>
+						</view>
+						
+						<!-- 美颜 -->
+						<view v-if="popupType === 'beauty'">
+							<slider show-value block-color="red" :value="beauty" :min="0" :max="9" :step="1" :block-size="18" @change="handleSliderChange" />
+						</view>
+						
+						<!-- 美颜 -->
+						<view v-if="popupType === 'whiteness'">
+							<slider show-value block-color="purple" :value="whiteness" :min="0" :max="9" :step="1" :block-size="18" @change="handleSliderChange" />
+						</view>
+						
+						<view class="f-divider"></view>
+						
+						<view @click="handleClosePopup" class="lex align-center justify-center py-2">
+							<text class="font">取消</text>
+						</view>
+					</view>
+				</uni-popup>
+			</view>
+		</view>
+</template>
+
+<script>
+// 点击tab中间的按钮跳转到直播间页面
+// 
+export default {
+	data() {
+		return {
+			showBars :true,
+			// 保存工具点击切换的状态
+			popupType : 'mode',
+			// 画质模式数据 推流视频模式，可取值：SD（标清）, HD（高清）, FHD（超清）。
+			modeList : [
+				{
+					type : "SD",
+					desc : "标清"
+				},
+				{
+					type : "HD",
+					desc : "高清"
+				},
+				{
+					type : "FHD",
+					desc : "超清"
+				}
+			],
+			// 保存状态栏的高度
+			statusBarHeight : 0,
+			// 保存屏幕的高度
+			windowHeight : 0,
+			// 保存的推流方法的实例对象
+			content: null,
+			// 推流地址，支持RTMP协议。
+			url: '',
+			// 推流视频模式，可取值：SD（标清）, HD（高清）, FHD（超清）
+			mode: 'SD',
+			// 是否静音。
+			muted: false,
+			// 	开启摄像头
+			enableCamera: true,
+			// 自动聚集
+			autoFocus: true,
+			// 美颜，取值范围 0-9（iOS取值范围为1） ，0 表示关闭。
+			beauty: 0,
+			// 美白，取值范围 0-9（iOS取值范围为1） ，0 表示关闭。
+			whiteness: 0,
+			// 前置或后置，值为front, back
+			devicePosition: "back"
+		};
+	},
+	onLoad() {
+		// 获取状态栏的高度
+		const res = uni.getSystemInfoSync()
+		console.log(res)
+		this.statusBarHeight = res.statusBarHeight
+		this.windowHeight = res.windowHeight
+	},
+	onReady() {
+		this.context = uni.createLivePusherContext('livePusher', this);
+		this.startPreview()
+	},
+	computed: {
+		popupTitle(){
+			const titleType = {
+				mode : '画质',
+				beauty : "美颜",
+				whiteness : "美白"
+			}
+			return titleType[this.popupType]
+		}
+	},
+	onBackPress() {
+		this.showBars = false
+	},
+	methods: {
+		// 跳转到主播直播间
+		handleOpenLive(){
+			uni.navigateTo({
+				url : '/pages/liveroom/liveroom'
+			})
+		},
+		// 关闭直播间
+		handleCloseCreateLive(){
+			uni.navigateBack({
+				delta: 1
+			})
+		},
+		// 设置美颜和美白
+		handleSliderChange(e){
+			this[this.popupType] = e.detail.value
+		},
+		// 选择画质
+		handleChooseMode(item){
+			this.mode = item.type
+			this.$refs.popup.close()
+			uni.showToast({
+				title : '画质切换为' + item.desc,
+				icon : "none"
+			})
+		},
+		// 打开弹出层
+		handleOpenPopup(value){
+			this.popupType = value
+			this.$refs.popup.open('bottom')
+		},
+		// 关闭弹出层
+		handleClosePopup(){
+			this.$refs.popup.close()
+		},
+		// 切换相机摄像头方法
+		handleSwitchCamera(){
+			this.context.switchCamera({
+				success : ()=>{
+					uni.showToast({
+						title : "摄像头切换成功",
+						icon : "none"
+					})
+				}
+			})
+		},
+		//开启预览
+		startPreview(){
+			this.context.startPreview({
+				success : function(e){
+					console.log(e)
+				}
+			});
+		},
+		// 监听直播状态发生变化触发的方法
+		statechange(e) {
+			console.log("1")
+			console.log(e);
+		},
+		// 监听直播间网络状态发生变化会触发的方法
+		netstatus(e) {
+			console.log("2")
+			console.log(e);
+		},
+		// 监听发生渲染错误会触发的方法
+		error(e) {
+			console.log("3")
+			console.log(e);
+		}
+	}
+};
+</script>
+
+<style>
+.preview{
+	position: fixed;
+	height : 580rpx;
+	left : 0;
+	right : 0;
+	z-index: 999;
+}
+.close{
+	width: 90rpx;
+	height: 90rpx;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.live-title{
+	position: absolute;
+	left : 90rpx;
+	right : 100rpx;
+	height : 160rpx;
+	display: flex;
+	flex-direction: row;
+	padding : 20rpx;
+	background-color: rgba(0,0,0,0.2);
+}
+.live-title .cover{
+	background-color: #fff;
+	width: 120rpx;
+	height: 120rpx;
+	border-radius: 60rpx;
+	overflow: hidden;
+}
+/* .live-title .cover .cover-image{
+	width: 120rpx;
+	height: 120rpx;
+} */
+/* .live-title .cover text{
+	left :0;
+	right : 0;
+	bottom : 0;
+} */
+	
+</style>
