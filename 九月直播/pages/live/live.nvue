@@ -4,31 +4,100 @@
 			:controls="false" autoplay></video>
 		<view :style="{'top' : statusBarHeight + 'px'}" class="text-white position-fixed left-0 right-0">
 			<!-- 个人信息|观看人数 -->
-			<view style="height:70rpx; " class="position-relative left-0 right-0 bg-danger"></view>
-
-			<!-- 用户金币数 -->
-			<view style="height:60rpx; margin-top:25rpx;width: 250rpx;" class="bg-main"></view>
-
-			<!-- 礼物区域 -->
-			<view style="height : 440rpx; width : 400rpx " class="bg-dark mt-2"></view>
-
-			<!-- 弹幕区域 -->
-			<view style="width:505rpx;height: 300rpx; bottom:130rpx; left:15rpx; right:15rpx;" class="position-fixed">
-				<view v-for="(item,index) in 10" :key="index" class="rounded mt-2 flex align-center px-2" style=" width:505rpx;background-color: rgba(255,255,255,0.3);">
-					<view  class="flex" style="max-width: 130rpx;  min-width: 65rpx; min-height :75rpx;">
-						<text class="text-danger font text-ellipsis">帅哥:</text>
+			<view style="height:80rpx; " class="position-relative flex left-0 right-0 ">
+				<view class="flex flex-1 align-center px-2" style="background-color: rgba(0,0,0,0.4);">
+					<view class="p">
+						<image src="../../static/tabbar/min.png" style="width: 70rpx; height: 70rpx;"
+							class="rounded-circle"></image>
 					</view>
-					<view class="flex-1">
-						<text class="text-white font" style="white-space: nowrap;">老师早上好 老师早上好老师早上好老师早上好老师早上好</text>
+					<view class="flex-1 ml-1 flex flex-column justify-center">
+						<text class="text-white font">昵称</text>
+						<text class="text-white font-sm">100</text>
+					</view>
+					<view class="rounded-circle flex align-center justify-center bg-danger"
+						style="width:70rpx; height : 70rpx;">
+						<text class="text-white">+</text>
 					</view>
 				</view>
-			
+				<view class="flex-1 flex" style="background-color: rgba(0,0,0,0.4);">
+					<scroll-view scroll-x="true" class="flex-1 flex">
+						<view class="p" v-for="(item,index) in 20" :key="index">
+							<image src="../../static/tabbar/min.png" style="width: 70rpx; height: 70rpx;"
+								class="rounded-circle"></image>
+						</view>
+					</scroll-view>
+					<!-- 观看人数 -->
+					<view class="rounded-circle flex align-center bg-danger justify-center"
+						style="width: 70rpx; height: 70rpx;">
+						<text class="text-white font-sm">1000</text>
+					</view>
+				</view>
+			</view>
+
+			<!-- 用户金币数 -->
+			<view class="my-2" style="height: 90rpx;">
+				<view style="width: 325rpx; background-color: rgba(255,255,255,0.4);"
+					class="px-2 flex align-center rounded-circle">
+					<view class="p">
+						<text class="text-warning font-md">金币</text>
+					</view>
+					<view class="flex-1  flex flex-column justify-center">
+						<text class="text-white font">100</text>
+					</view>
+				</view>
+			</view>
+
+			<!-- 礼物区域 -->
+			<view style="height : 500rpx; width : 400rpx " class=" mt-2">
+				<list insert-animation="default" delete-animation="default" style="width: 520rpx; height: 500rpx;">
+					<cell :ref="'item' + index " class="flex align-center pt-3  px-3" v-for="(item,index) in gifts"
+						:key="item.id">
+						<view style="width: 325rpx; background-image: linear-gradient(to right,#BCABB1, #65AAF0);"
+							class="flex align-center  rounded-circle">
+							<view class="p">
+								<image src="../../static/tabbar/min.png" style="width: 70rpx; height: 70rpx;"
+									class="rounded-circle"></image>
+							</view>
+							<view class="flex-1  flex flex-column justify-center">
+								<text class="text-white font">{{item.username}}</text>
+								<text class="text-white font-sm">{{item.gift_name}}</text>
+							</view>
+							<view class="p">
+								<image :src="item.gift_image || '/static/gift/4.png'"
+									style="width: 70rpx; height: 70rpx;" class="rounded-circle"></image>
+							</view>
+						</view>
+
+
+						<text class="text-warning font-lg ml-1">X {{item.num}}</text>
+					</cell>
+
+				</list>
+			</view>
+
+			<!-- 弹幕区域 -->
+			<view style="overflow: hidden; width:505rpx;height: 300rpx; bottom:130rpx; left:15rpx; right:15rpx;"
+				class="position-fixed">
+				<scroll-view scroll-with-animation :scroll-into-view="scrollIntoView" scroll-y="true"
+					style="width : 505rpx; height:300rpx;">
+					<view :id="'danmu' + item.id" v-for="(item,index) in list" :key="index"
+						class="rounded mt-2 flex align-center px-2"
+						style=" width:505rpx;background-color: rgba(255,255,255,0.3);">
+						<view class="flex align-center"
+							style="max-width: 130rpx;  min-width: 65rpx; min-height :75rpx;">
+							<text class="text-danger font text-ellipsis">{{item.name}}:</text>
+						</view>
+						<view class="flex-1">
+							<text class="text-white font" style="white-space: nowrap;">{{item.content}}</text>
+						</view>
+					</view>
+				</scroll-view>
 			</view>
 		</view>
-		
+
 		<view class="position-fixed bottom-0 flex align-center justify-between"
 			style="height : 130rpx;  box-sizing: border-box; left : 15rpx; right: 15rpx;">
-			<view class="flex align-center justify-center"
+			<view @click="handleOpenPopup('danmu')" class="flex align-center justify-center"
 				style="width:195rpx; height :80rpx;background-color: rgba(255,255,255,0.1);border-radius: 40rpx;">
 				<text class="font text-white">说点什么...</text>
 			</view>
@@ -37,7 +106,7 @@
 					class="flex mr-1 justify-center  rounded-circle align-center">
 					<text class="iconfont text-white" style="font-size: 40px; ">&#xe633;</text>
 				</view>
-				<view style="height:80rpx; width: 80rpx;"
+				<view @click="handleOpenPopup('gifts')" style="height:80rpx; width: 80rpx;"
 					class="flex mr-1 justify-center rounded-circle align-center bg-warning">
 					<text class="iconfont">&#xe67c;</text>
 				</view>
@@ -45,29 +114,390 @@
 					class="flex mr-1 justify-center  rounded-circle align-center">
 					<text class="iconfont text-white">&#xe7cd;</text>
 				</view>
-				<view style="height:80rpx; width: 80rpx; background-color: rgba(255,255,255,0.12);"
+				<view @click="handleCloseLive"
+					style="height:80rpx; width: 80rpx; background-color: rgba(255,255,255,0.12);"
 					class="flex mr-1 justify-center rounded-circle align-center">
 					<text class="iconfont text-white">&#xe607;</text>
 				</view>
 			</view>
 		</view>
+
+
+		<uni-popup ref="popup" type="bottom">
+			<view v-if="popupType === 'danmu'" class="bg-white flex align-center px-3" style="height :120rpx;">
+				<input type="text" placeholder="说点什么呢..." v-model='content' style="height: 80rpx;"
+					class="border rounded flex-1 px-3 font-md">
+				<view @click="handleSubmit" :class="this.content == '' ? 'bg-main-disabled' : 'bg-main'"
+					class=" flex ml-3  align-center py-2 rounded px-2 justify-center">
+					<text class="font text-white">发送</text>
+				</view>
+			</view>
+
+			<view v-if="popupType === 'gifts'" class="bg-white flex flex-column" style="height : 550rpx; ">
+				<view class="flex align-center px-3 justify-between border-bottom" style="height:100rpx;">
+					<text class="text-main">礼物</text>
+					<text @click="handleClosePupup" class="iconfont">&#xe607;</text>
+				</view>
+				<view class="flex-1">
+					<swiper :indicator-dots="true">
+						<swiper-item v-for="(item,index) in newGiftList" :key="index" class="flex flex-wrap">
+							<view @click="giftActiveId = mitem.id"
+								:class="mitem.id == giftActiveId ? 'border boder-main' : ''"
+								v-for="(mitem,index) in item" :key="index" style="width: 187.5rpx; height: 175rpx;"
+								class="flex flex-column justify-center align-center">
+								<image :src="'http://ws.9yuecloud.com' + mitem.image || '../../static/gift/1.png'"
+									style="width: 100rpx; height: 100rpx;"></image>
+								<view class="flex mt-1">
+									<text class="text-warning font mr-1">{{mitem.name}}</text>
+									<text class="text-secondary font">{{mitem.coin}}</text>
+								</view>
+							</view>
+						</swiper-item>
+					</swiper>
+				</view>
+				<view class="flex px-2 justify-end align-center border-top" style="height:100rpx;">
+					<view class="flex mr-2 align-center justify-center bg-warning rounded"
+						style="width:120rpx; height:70rpx;">
+						<text class="font">充值</text>
+					</view>
+					<view class="flex align-center justify-center bg-main rounded" style="width:120rpx; height:70rpx;">
+						<text class="text-white font" @click="sendGift">发送</text>
+					</view>
+				</view>
+			</view>
+		</uni-popup>
 	</view>
 </template>
 
 <script>
+	const dom = uni.requireNativePlugin('dom')
+	import arr1To2 from "@/utils/utils.js"
 	export default {
 		data() {
 			return {
-				statusBarHeight: 0
+				giftActiveId: 0,
+				popupType: "danmu",
+				statusBarHeight: 0,
+				scrollIntoView: "",
+				list: [],
+				gifts: [{
+						username: "发送人1",
+						avatar: "",
+						gift_name: "蛋糕",
+						gift_image: "/static/gift/3.png",
+						num: 1
+					},
+					{
+						username: "发送人2",
+						avatar: "",
+						gift_name: "蛋糕",
+						gift_image: "/static/gift/4.png",
+						num: 10
+					}
+				],
+				content: "",
+				giftList: [{
+						"created_time": "2020-09-14 20:11:20",
+						"id": 1,
+						"name": "鸡蛋",
+						"image": "/public/uploads/2020/09/14/1600085475946.png",
+						"coin": 1,
+						"updated_time": "2020-09-14T12:11:20.000Z"
+					},
+					{
+						"created_time": "2021-01-11 19:16:05",
+						"id": 2,
+						"name": "水晶鞋",
+						"image": "/public/uploads/2021/01/11/1610363761598.png",
+						"coin": 1000,
+						"updated_time": "2021-01-11T11:16:05.000Z"
+					},
+					{
+						"created_time": "2022-05-11 11:23:04",
+						"id": 3,
+						"name": "花生米",
+						"image": "/public/uploads/2022/05/11/1652239380292.png",
+						"coin": 100,
+						"updated_time": "2022-05-11T03:23:04.000Z"
+					},
+					{
+						"created_time": "2022-05-13 11:09:54",
+						"id": 4,
+						"name": "飞机",
+						"image": "/public/uploads/2022/05/13/1652411387217.gif",
+						"coin": 9999,
+						"updated_time": "2022-05-13T03:10:23.000Z"
+					},
+					{
+						"created_time": "2022-05-13 11:10:44",
+						"id": 5,
+						"name": "火箭",
+						"image": "/public/uploads/2022/05/13/1652411436812.jpg",
+						"coin": 99999,
+						"updated_time": "2022-05-13T03:10:44.000Z"
+					},
+					{
+						"created_time": "2022-05-18 23:01:29",
+						"id": 7,
+						"name": "大番茄",
+						"image": "/public/uploads/2022/05/18/1652886068239.jpg",
+						"coin": 888,
+						"updated_time": "2022-05-18T15:01:29.000Z"
+					},
+					{
+						"created_time": "2022-05-18 23:02:11",
+						"id": 8,
+						"name": "举报",
+						"image": "/public/uploads/2022/05/18/1652886112514.jpg",
+						"coin": 1,
+						"updated_time": "2022-05-18T15:02:11.000Z"
+					},
+					{
+						"created_time": "2022-05-18 23:02:50",
+						"id": 9,
+						"name": "无中生有",
+						"image": "/public/uploads/2022/05/18/1652886152883.png",
+						"coin": 1,
+						"updated_time": "2022-05-18T15:03:12.000Z"
+					},
+					{
+						"created_time": "2022-05-20 10:51:34",
+						"id": 10,
+						"name": "游艇",
+						"image": "/public/uploads/2022/05/20/1653015091991.jpg",
+						"coin": 10,
+						"updated_time": "2022-05-20T02:51:34.000Z"
+					},
+					{
+						"created_time": "2022-05-20 10:51:50",
+						"id": 11,
+						"name": "高跟鞋",
+						"image": "/public/uploads/2022/05/20/1653015107066.png",
+						"coin": 100,
+						"updated_time": "2022-05-20T02:51:50.000Z"
+					},
+					{
+						"created_time": "2020-09-14 20:11:20",
+						"id": 1,
+						"name": "鸡蛋",
+						"image": "/public/uploads/2020/09/14/1600085475946.png",
+						"coin": 1,
+						"updated_time": "2020-09-14T12:11:20.000Z"
+					},
+					{
+						"created_time": "2021-01-11 19:16:05",
+						"id": 2,
+						"name": "水晶鞋",
+						"image": "/public/uploads/2021/01/11/1610363761598.png",
+						"coin": 1000,
+						"updated_time": "2021-01-11T11:16:05.000Z"
+					},
+					{
+						"created_time": "2022-05-11 11:23:04",
+						"id": 3,
+						"name": "花生米",
+						"image": "/public/uploads/2022/05/11/1652239380292.png",
+						"coin": 100,
+						"updated_time": "2022-05-11T03:23:04.000Z"
+					},
+					{
+						"created_time": "2022-05-13 11:09:54",
+						"id": 4,
+						"name": "飞机",
+						"image": "/public/uploads/2022/05/13/1652411387217.gif",
+						"coin": 9999,
+						"updated_time": "2022-05-13T03:10:23.000Z"
+					},
+					{
+						"created_time": "2022-05-13 11:10:44",
+						"id": 5,
+						"name": "火箭",
+						"image": "/public/uploads/2022/05/13/1652411436812.jpg",
+						"coin": 99999,
+						"updated_time": "2022-05-13T03:10:44.000Z"
+					},
+					{
+						"created_time": "2022-05-18 23:01:29",
+						"id": 7,
+						"name": "大番茄",
+						"image": "/public/uploads/2022/05/18/1652886068239.jpg",
+						"coin": 888,
+						"updated_time": "2022-05-18T15:01:29.000Z"
+					},
+					{
+						"created_time": "2022-05-18 23:02:11",
+						"id": 8,
+						"name": "举报",
+						"image": "/public/uploads/2022/05/18/1652886112514.jpg",
+						"coin": 1,
+						"updated_time": "2022-05-18T15:02:11.000Z"
+					},
+					{
+						"created_time": "2022-05-18 23:02:50",
+						"id": 9,
+						"name": "无中生有",
+						"image": "/public/uploads/2022/05/18/1652886152883.png",
+						"coin": 1,
+						"updated_time": "2022-05-18T15:03:12.000Z"
+					},
+					{
+						"created_time": "2022-05-20 10:51:34",
+						"id": 10,
+						"name": "游艇",
+						"image": "/public/uploads/2022/05/20/1653015091991.jpg",
+						"coin": 10,
+						"updated_time": "2022-05-20T02:51:34.000Z"
+					},
+					{
+						"created_time": "2022-05-20 10:51:50",
+						"id": 11,
+						"name": "高跟鞋",
+						"image": "/public/uploads/2022/05/20/1653015107066.png",
+						"coin": 100,
+						"updated_time": "2022-05-20T02:51:50.000Z"
+					}
+				]
 			}
 		},
 		onLoad() {
+			// js将一维数组处理成二维数组
+
+
 			// 获取状态栏的高度
 			const res = uni.getSystemInfoSync()
 			this.statusBarHeight = res.statusBarHeight
 		},
-		methods: {
+		mounted() {
+			// setInterval(() => {
+			// 	this.gifts.push({
+			// 		username: "发送人",
+			// 		avatar: "",
+			// 		gift_name: "蛋糕",
+			// 		gift_image: "/static/gift/3.png",
+			// 		num: 1
+			// 	})
 
+			// 	this.toGiftBottom()
+
+			// 	this.autoHide()
+			// }, 1000)
+			// let id = 1;
+			// setInterval(() => {
+			// 	this.send({
+			// 		id: id,
+			// 		name: "昵称" + id,
+			// 		content: "九月直播666"
+			// 	})
+			// 	id++;
+			// }, 1000)
+		},
+		computed: {
+			newGiftList() {
+				return arr1To2(this.giftList, 8)
+			}
+		},
+		methods: {
+			// 发送礼物方法
+			sendGift(data) {
+
+				if (this.giftActiveId == 0) {
+					return uni.showToast({
+						title: "请选择要发送的礼物",
+						icon: "none"
+					})
+				}
+				
+				//查找出对应的礼物
+				let index = this.giftList.findIndex(item=> item.id == this.giftActiveId)
+				console.log("index",index)
+				if(index == -1){
+					return;
+				}
+				
+				let g = this.giftList[index];
+				
+				this.gifts({
+					username : "发送人",
+					avatar : "",
+					gift_name : g.name,
+					gift_image : g.image,
+					num : 1
+				})
+							
+				this.toGiftBottom()
+				this.autoHide()			
+					
+				//关闭送礼物弹出层
+				this.closeGift();
+
+				
+			},
+			// 发送弹幕方法
+			send(data) {
+				this.list.push(data)
+				this.toBottom()
+			},
+			// 滚动条滚动到底部
+			toBottom() {
+				setTimeout(() => {
+					// 获取list数组的长度
+					let len = this.list.length
+					// 判断数组是否有数据 以及 能否得到最后一条数据
+					if (len > 0 && this.list[len - 1]) {
+						// 如果能得到的话就通过scrollIntoView 滚动到对应元素的位置
+						this.scrollIntoView = 'danmu' + this.list[len - 1].id
+					}
+				}, 2000)
+			},
+			toGiftBottom() {
+				this.$nextTick(() => {
+					// 获取礼物数组的最后一条数据的下标  5 4
+					let index = this.gifts.length - 1;
+					// 拿到最后一条数据的ref的名称
+					let ref = 'item' + index;
+					// 滚动到对应的元素位置
+					dom.scrollToElement(this.$refs[ref][0], {})
+				})
+
+			},
+			// 打开输入框弹窗
+			handleOpenPopup(type) {
+				this.popupType = type
+				this.$refs.popup.open("bottom")
+			},
+			handleSubmit() {
+				if (this.content == "") {
+					return
+				}
+
+				this.send({
+					id: Math.random() * 100,
+					name: "昵称",
+					content: this.content
+				})
+
+				this.content = ""
+
+				this.handleClosePupup()
+			},
+			// 关闭弹出层
+			handleClosePupup() {
+				this.$refs.popup.close()
+			},
+			// 关闭直播间
+			handleCloseLive() {
+				uni.navigateBack({
+					delta: 1
+				})
+			},
+			// 礼物自动消失方法
+			autoHide() {
+				if (this.gifts.length) {
+					let timer = setTimeout(() => {
+						this.gifts.splice(0, 1);
+					}, 2000)
+				}
+			}
 		}
 	}
 </script>

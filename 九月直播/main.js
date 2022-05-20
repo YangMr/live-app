@@ -13,6 +13,8 @@ Vue.prototype.authJump = function(options){
 	uni.navigateTo(options)
 }
 
+import "@/utils/utils.js"
+
 // #ifndef VUE3
 import Vue from 'vue'
 Vue.config.productionTip = false
