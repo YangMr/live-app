@@ -152,7 +152,6 @@ export default {
 	onLoad() {
 		// 获取状态栏的高度
 		const res = uni.getSystemInfoSync()
-		console.log(res)
 		this.statusBarHeight = res.statusBarHeight
 		this.windowHeight = res.windowHeight
 	},

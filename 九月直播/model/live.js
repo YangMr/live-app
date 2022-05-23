@@ -14,8 +14,11 @@ class Live {
 		this.page++
 		this.hasMoreData = res.length < 10 ? true : false
 		this.data = this.data.concat(res)
-		console.log('test==>',this.data)
 		return this.data
+	}
+
+	static getLiveDetail(id){
+		return Http.request({url : `/live/read/${id}`, method : "GET"})
 	}
 
 	reset() {

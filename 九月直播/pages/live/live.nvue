@@ -1,18 +1,17 @@
 <template>
 	<view class="page">
-		<video class="video" src="http://stream10.fjtv.net/cctv1/playlist.m3u8?_upt=71da62d61652937716"
-			:controls="false" autoplay></video>
+		<video class="video" :src="src" :controls="false" autoplay></video>
 		<view :style="{'top' : statusBarHeight + 'px'}" class="text-white position-fixed left-0 right-0">
 			<!-- 个人信息|观看人数 -->
 			<view style="height:80rpx; " class="position-relative flex left-0 right-0 ">
 				<view class="flex flex-1 align-center px-2" style="background-color: rgba(0,0,0,0.4);">
 					<view class="p">
-						<image src="../../static/tabbar/min.png" style="width: 70rpx; height: 70rpx;"
+						<image :src="liveDetail.user.avatar || '../../static/tabbar/min.png'" style="width: 70rpx; height: 70rpx;"
 							class="rounded-circle"></image>
 					</view>
 					<view class="flex-1 ml-1 flex flex-column justify-center">
-						<text class="text-white font">昵称</text>
-						<text class="text-white font-sm">100</text>
+						<text class="text-white font">{{liveDetail.user.username}}</text>
+						<text class="text-white font-sm">{{liveDetail.look_count}}</text>
 					</view>
 					<view class="rounded-circle flex align-center justify-center bg-danger"
 						style="width:70rpx; height : 70rpx;">
@@ -42,7 +41,7 @@
 						<text class="text-warning font-md">金币</text>
 					</view>
 					<view class="flex-1  flex flex-column justify-center">
-						<text class="text-white font">100</text>
+						<text class="text-white font">{{liveDetail.coin}}</text>
 					</view>
 				</view>
 			</view>
@@ -69,7 +68,7 @@
 						</view>
 
 
-						<text class="text-warning font-lg ml-1">X {{item.num}}</text>
+						<text class="text-warning font-lg ml-1" >X {{item.num}}</text>
 					</cell>
 
 				</list>
@@ -172,265 +171,110 @@
 <script>
 	const dom = uni.requireNativePlugin('dom')
 	import arr1To2 from "@/utils/utils.js"
+	import Gift from "@/model/gift.js"
+	import Live from "@/model/live.js"
+	import ApiConfig from "@/config/api.js"
 	export default {
 		data() {
 			return {
+				user : null,
+				id : 0,
 				giftActiveId: 0,
 				popupType: "danmu",
 				statusBarHeight: 0,
 				scrollIntoView: "",
 				list: [],
-				gifts: [{
-						username: "发送人1",
-						avatar: "",
-						gift_name: "蛋糕",
-						gift_image: "/static/gift/3.png",
-						num: 1
-					},
-					{
-						username: "发送人2",
-						avatar: "",
-						gift_name: "蛋糕",
-						gift_image: "/static/gift/4.png",
-						num: 10
-					}
-				],
+				gifts: [],
 				content: "",
-				giftList: [{
-						"created_time": "2020-09-14 20:11:20",
-						"id": 1,
-						"name": "鸡蛋",
-						"image": "/public/uploads/2020/09/14/1600085475946.png",
-						"coin": 1,
-						"updated_time": "2020-09-14T12:11:20.000Z"
-					},
-					{
-						"created_time": "2021-01-11 19:16:05",
-						"id": 2,
-						"name": "水晶鞋",
-						"image": "/public/uploads/2021/01/11/1610363761598.png",
-						"coin": 1000,
-						"updated_time": "2021-01-11T11:16:05.000Z"
-					},
-					{
-						"created_time": "2022-05-11 11:23:04",
-						"id": 3,
-						"name": "花生米",
-						"image": "/public/uploads/2022/05/11/1652239380292.png",
-						"coin": 100,
-						"updated_time": "2022-05-11T03:23:04.000Z"
-					},
-					{
-						"created_time": "2022-05-13 11:09:54",
-						"id": 4,
-						"name": "飞机",
-						"image": "/public/uploads/2022/05/13/1652411387217.gif",
-						"coin": 9999,
-						"updated_time": "2022-05-13T03:10:23.000Z"
-					},
-					{
-						"created_time": "2022-05-13 11:10:44",
-						"id": 5,
-						"name": "火箭",
-						"image": "/public/uploads/2022/05/13/1652411436812.jpg",
-						"coin": 99999,
-						"updated_time": "2022-05-13T03:10:44.000Z"
-					},
-					{
-						"created_time": "2022-05-18 23:01:29",
-						"id": 7,
-						"name": "大番茄",
-						"image": "/public/uploads/2022/05/18/1652886068239.jpg",
-						"coin": 888,
-						"updated_time": "2022-05-18T15:01:29.000Z"
-					},
-					{
-						"created_time": "2022-05-18 23:02:11",
-						"id": 8,
-						"name": "举报",
-						"image": "/public/uploads/2022/05/18/1652886112514.jpg",
-						"coin": 1,
-						"updated_time": "2022-05-18T15:02:11.000Z"
-					},
-					{
-						"created_time": "2022-05-18 23:02:50",
-						"id": 9,
-						"name": "无中生有",
-						"image": "/public/uploads/2022/05/18/1652886152883.png",
-						"coin": 1,
-						"updated_time": "2022-05-18T15:03:12.000Z"
-					},
-					{
-						"created_time": "2022-05-20 10:51:34",
-						"id": 10,
-						"name": "游艇",
-						"image": "/public/uploads/2022/05/20/1653015091991.jpg",
-						"coin": 10,
-						"updated_time": "2022-05-20T02:51:34.000Z"
-					},
-					{
-						"created_time": "2022-05-20 10:51:50",
-						"id": 11,
-						"name": "高跟鞋",
-						"image": "/public/uploads/2022/05/20/1653015107066.png",
-						"coin": 100,
-						"updated_time": "2022-05-20T02:51:50.000Z"
-					},
-					{
-						"created_time": "2020-09-14 20:11:20",
-						"id": 1,
-						"name": "鸡蛋",
-						"image": "/public/uploads/2020/09/14/1600085475946.png",
-						"coin": 1,
-						"updated_time": "2020-09-14T12:11:20.000Z"
-					},
-					{
-						"created_time": "2021-01-11 19:16:05",
-						"id": 2,
-						"name": "水晶鞋",
-						"image": "/public/uploads/2021/01/11/1610363761598.png",
-						"coin": 1000,
-						"updated_time": "2021-01-11T11:16:05.000Z"
-					},
-					{
-						"created_time": "2022-05-11 11:23:04",
-						"id": 3,
-						"name": "花生米",
-						"image": "/public/uploads/2022/05/11/1652239380292.png",
-						"coin": 100,
-						"updated_time": "2022-05-11T03:23:04.000Z"
-					},
-					{
-						"created_time": "2022-05-13 11:09:54",
-						"id": 4,
-						"name": "飞机",
-						"image": "/public/uploads/2022/05/13/1652411387217.gif",
-						"coin": 9999,
-						"updated_time": "2022-05-13T03:10:23.000Z"
-					},
-					{
-						"created_time": "2022-05-13 11:10:44",
-						"id": 5,
-						"name": "火箭",
-						"image": "/public/uploads/2022/05/13/1652411436812.jpg",
-						"coin": 99999,
-						"updated_time": "2022-05-13T03:10:44.000Z"
-					},
-					{
-						"created_time": "2022-05-18 23:01:29",
-						"id": 7,
-						"name": "大番茄",
-						"image": "/public/uploads/2022/05/18/1652886068239.jpg",
-						"coin": 888,
-						"updated_time": "2022-05-18T15:01:29.000Z"
-					},
-					{
-						"created_time": "2022-05-18 23:02:11",
-						"id": 8,
-						"name": "举报",
-						"image": "/public/uploads/2022/05/18/1652886112514.jpg",
-						"coin": 1,
-						"updated_time": "2022-05-18T15:02:11.000Z"
-					},
-					{
-						"created_time": "2022-05-18 23:02:50",
-						"id": 9,
-						"name": "无中生有",
-						"image": "/public/uploads/2022/05/18/1652886152883.png",
-						"coin": 1,
-						"updated_time": "2022-05-18T15:03:12.000Z"
-					},
-					{
-						"created_time": "2022-05-20 10:51:34",
-						"id": 10,
-						"name": "游艇",
-						"image": "/public/uploads/2022/05/20/1653015091991.jpg",
-						"coin": 10,
-						"updated_time": "2022-05-20T02:51:34.000Z"
-					},
-					{
-						"created_time": "2022-05-20 10:51:50",
-						"id": 11,
-						"name": "高跟鞋",
-						"image": "/public/uploads/2022/05/20/1653015107066.png",
-						"coin": 100,
-						"updated_time": "2022-05-20T02:51:50.000Z"
+				giftList: [],
+				liveDetail: {
+					"created_time": "",
+					"id": 0,
+					"title": "",
+					"cover": "",
+					"user_id": 0,
+					"look_count": 0,
+					"coin": 0,
+					"key": "",
+					"status": 0,
+					"userId": 0,
+					"user": {
+						"id": 0,
+						"username": "",
+						"avatar": ""
 					}
-				]
+				},
+				sign : ""
 			}
 		},
-		onLoad() {
-			// js将一维数组处理成二维数组
-
-
+		onLoad(e) {
+			this.id = e.id
+			this.user = this.$store.state.user
 			// 获取状态栏的高度
 			const res = uni.getSystemInfoSync()
 			this.statusBarHeight = res.statusBarHeight
-		},
-		mounted() {
-			// setInterval(() => {
-			// 	this.gifts.push({
-			// 		username: "发送人",
-			// 		avatar: "",
-			// 		gift_name: "蛋糕",
-			// 		gift_image: "/static/gift/3.png",
-			// 		num: 1
-			// 	})
-
-			// 	this.toGiftBottom()
-
-			// 	this.autoHide()
-			// }, 1000)
-			// let id = 1;
-			// setInterval(() => {
-			// 	this.send({
-			// 		id: id,
-			// 		name: "昵称" + id,
-			// 		content: "九月直播666"
-			// 	})
-			// 	id++;
-			// }, 1000)
+			
+			this.getGiftList()
+			this.getLiveDetail()
 		},
 		computed: {
 			newGiftList() {
-				return arr1To2(this.giftList, 8)
+				const newArrList = JSON.parse(JSON.stringify(this.giftList))
+				return arr1To2(newArrList, 8)
+			},
+			src(){
+				if(this.liveDetail.key == "" && this.sign == ""){
+					return
+				}
+				return `${ApiConfig.pullStream}/live/${this.liveDetail.key}.flv?sign=${this.sign}`
 			}
 		},
 		methods: {
+			// 获取礼物数据方法
+			async getGiftList(){
+				const giftList = await Gift.getGiftList()
+				this.giftList = giftList
+			},
+			// 获取指定直播间详情数据
+			async getLiveDetail(){
+				const liveDetail =await Live.getLiveDetail(this.id)
+				this.liveDetail = liveDetail.data
+				this.sign = liveDetail.sign
+			},
 			// 发送礼物方法
 			sendGift(data) {
-
-				if (this.giftActiveId == 0) {
-					return uni.showToast({
-						title: "请选择要发送的礼物",
-						icon: "none"
-					})
-				}
-				
-				//查找出对应的礼物
-				let index = this.giftList.findIndex(item=> item.id == this.giftActiveId)
-				console.log("index",index)
-				if(index == -1){
-					return;
-				}
-				
-				let g = this.giftList[index];
-				
-				this.gifts({
-					username : "发送人",
-					avatar : "",
-					gift_name : g.name,
-					gift_image : g.image,
-					num : 1
-				})
-							
-				this.toGiftBottom()
-				this.autoHide()			
+				this.$store.dispatch("authMethod",()=>{
+					if (this.giftActiveId == 0) {
+						return uni.showToast({
+							title: "请选择要发送的礼物",
+							icon: "none"
+						})
+					}
 					
-				//关闭送礼物弹出层
-				this.closeGift();
-
-				
+					
+					//查找出对应的礼物
+					let index = this.giftList.findIndex(item=>item.id === this.giftActiveId)
+					
+					if(index == -1){
+						return;
+					}
+					
+					let g = this.giftList[index];
+					
+					this.gifts.push({
+						username : this.user.username,
+						avatar : "",
+						gift_name : g.name,
+						gift_image : g.image,
+						num : 1
+					})
+								
+					this.toGiftBottom()
+					this.autoHide()			
+						
+					//关闭送礼物弹出层
+					this.handleClosePupup();
+				})
 			},
 			// 发送弹幕方法
 			send(data) {
@@ -466,19 +310,25 @@
 				this.$refs.popup.open("bottom")
 			},
 			handleSubmit() {
-				if (this.content == "") {
-					return
-				}
-
-				this.send({
-					id: Math.random() * 100,
-					name: "昵称",
-					content: this.content
+			
+				
+				this.$store.dispatch("authMethod",()=>{
+					
+					if (this.content == "") {
+						return
+					}
+					
+					this.send({
+						id: Math.random() * 100,
+						name: this.user.username,
+						content: this.content
+					})
+					
+					this.content = ""
+					
+					this.handleClosePupup()
 				})
-
-				this.content = ""
-
-				this.handleClosePupup()
+				
 			},
 			// 关闭弹出层
 			handleClosePupup() {

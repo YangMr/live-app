@@ -1,22 +1,391 @@
 <template>
-	<view>
-		主播直播间
+	<view class="page">
+		<live-pusher id="livePusher" ref="livePusher" class="livePusher" :url="url" :mode="mode" :muted="muted"
+			:enable-camera="enableCamera" :auto-focus="autoFocus" :beauty="beauty" whiteness="whiteness"
+			:device-position="devicePosition" @statechange="statechange" @netstatus="netstatus" @error="error"
+			:style="{ 'height' : windowHeight + 'px'  }" style="width:750rpx;"></live-pusher>
+
+		<view :style="{'top' : statusBarHeight + 'px'}" class="text-white position-fixed left-0 right-0">
+			<!-- 个人信息|观看人数 -->
+			<view style="height:80rpx; " class="position-relative flex left-0 right-0 ">
+				<view class="flex flex-1 align-center px-2">
+					<view class="p">
+						<image src="../../static/tabbar/min.png" style="width: 70rpx; height: 70rpx;"
+							class="rounded-circle"></image>
+					</view>
+					<view class="flex-1 ml-1 flex flex-column justify-center">
+						<text class="text-white font">昵称</text>
+						<text class="text-white font-sm">100</text>
+					</view>
+					<view class="rounded-circle flex align-center justify-center bg-danger"
+						style="width:70rpx; height : 70rpx;">
+						<text class="text-white">+</text>
+					</view>
+				</view>
+				<view class="flex-1 flex" style="background-color: rgba(0,0,0,0.4);">
+					<scroll-view scroll-x="true" class="flex-1 flex">
+						<view class="p" v-for="(item,index) in 20" :key="index">
+							<image src="../../static/tabbar/min.png" style="width: 70rpx; height: 70rpx;"
+								class="rounded-circle"></image>
+						</view>
+					</scroll-view>
+					<!-- 观看人数 -->
+					<view class="rounded-circle flex align-center justify-center"
+						style="width: 70rpx; height: 70rpx; background-color: rgba(255,255,255,0.4);">
+						<text class="text-white font-sm">1000</text>
+					</view>
+				</view>
+			</view>
+
+			<!-- 用户金币数 -->
+			<view class="my-2 ml-2" style="height: 90rpx;">
+				<view style="width: 270rpx; background-color: rgba(0,0,0,0.4);"
+					class="px-2 flex align-center rounded-circle">
+					<view class="p">
+						<text class="text-warning font-md">金币</text>
+					</view>
+					<view class="flex-1  flex flex-column justify-center">
+						<text class="text-white font">100</text>
+					</view>
+				</view>
+			</view>
+
+			<!-- 礼物区域 -->
+			<view style="height : 500rpx; width : 400rpx " class=" mt-2">
+				<list insert-animation="default" delete-animation="default" style="width: 520rpx; height: 500rpx;">
+					<cell :ref="'item' + index " class="flex align-center pt-3  px-3" v-for="(item,index) in gifts"
+						:key="item.id">
+						<view style="width: 325rpx; background-image: linear-gradient(to right,#BCABB1, #65AAF0);"
+							class="flex align-center  rounded-circle">
+							<view class="p">
+								<image src="../../static/tabbar/min.png" style="width: 70rpx; height: 70rpx;"
+									class="rounded-circle"></image>
+							</view>
+							<view class="flex-1  flex flex-column justify-center">
+								<text class="text-white font">{{item.username}}</text>
+								<text class="text-white font-sm">{{item.gift_name}}</text>
+							</view>
+							<view class="p">
+								<image :src="item.gift_image || '/static/gift/4.png'"
+									style="width: 70rpx; height: 70rpx;" class="rounded-circle"></image>
+							</view>
+						</view>
+
+
+						<text class="text-warning font-lg ml-1">X {{item.num}}</text>
+					</cell>
+
+				</list>
+			</view>
+
+			<!-- 弹幕区域 -->
+			<view style="overflow: hidden; width:505rpx;height: 300rpx; bottom:130rpx; left:15rpx; right:15rpx;"
+				class="position-fixed">
+				<scroll-view scroll-with-animation :scroll-into-view="scrollIntoView" scroll-y="true"
+					style="width : 505rpx; height:300rpx;">
+					<view :id="'danmu' + item.id" v-for="(item,index) in list" :key="index"
+						class="rounded mt-2 flex align-center px-2"
+						style=" width:505rpx;background-color: rgba(255,255,255,0.3);">
+						<view class="flex align-center"
+							style="max-width: 130rpx;  min-width: 65rpx; min-height :75rpx;">
+							<text class="text-danger font text-ellipsis">{{item.name}}:</text>
+						</view>
+						<view class="flex-1">
+							<text class="text-white font" style="white-space: nowrap;">{{item.content}}</text>
+						</view>
+					</view>
+				</scroll-view>
+			</view>
+		</view>
+
+		<view style="height:100rpx; bottom:20rpx;" class="py-2 position-fixed left-0 right-0 ">
+			<view class="flex align-center">
+				<view @click="handleBottomEvent(item)" class="flex-1 flex flex-column align-center justify-center" v-for="(item,index) in btns" :key="index">
+					<text class="iconfont text-white mb-1 font">{{item.icon}}</text>
+					<text class="text-white font">{{item.name}}</text>
+				</view>
+			</view>
+		</view>
+
+		<!-- 弹出层 -->
+		<uni-popup ref="popup" type="bottom">
+			<view class="bg-white">
+				<view class="flex border-bottom justify-center align-center" style="height : 90rpx;">
+					<text class="font">{{popupTitle}}</text>
+				</view>
+
+				<!-- 画质 -->
+				<view v-if="popupType === 'mode'">
+					<view @click="handleChooseMode(item)" v-for="(item,index) in modeList" :key="index"
+						:class="mode === item.type ? 'bg-main' : ''" class="flex align-center justify-center py-2">
+						<text class="font-md" :class="mode === item.type ? 'text-white': ''">{{item.desc}}</text>
+					</view>
+				</view>
+
+				<!-- 美颜 -->
+				<view v-if="popupType === 'beauty'">
+					<slider show-value block-color="red" :value="beauty" :min="0" :max="9" :step="1" :block-size="18"
+						@change="handleSliderChange" />
+				</view>
+
+				<!-- 美颜 -->
+				<view v-if="popupType === 'whiteness'">
+					<slider show-value block-color="purple" :value="whiteness" :min="0" :max="9" :step="1"
+						:block-size="18" @change="handleSliderChange" />
+				</view>
+				
+				<!-- 更多 -->
+				<view v-else class="flex flex-wrap">
+					<view class="flex flex-column align-center justify-center" style="width: 150rpx;height: 150rpx;" @click="pauseOrPlay">
+						<text class="iconfont mb-1">&#xe611;</text>
+						<text class="font">{{ isPause ? '继续' : '暂停' }}</text>
+					</view>
+					<view class="flex flex-column align-center justify-center" style="width: 150rpx;height: 150rpx;" @click="back">
+						<text class="iconfont mb-1">&#xe64d;</text>
+						<text class="font">退出</text>
+					</view>
+				</view>
+
+				<view class="f-divider"></view>
+
+				<view v-if="popupType !== 'more'" @click="handleClosePopup" class="lex align-center justify-center py-2">
+					<text class="font">取消</text>
+				</view>
+			</view>
+		</uni-popup>
+
+
 	</view>
 </template>
 
 <script>
+	const dom = uni.requireNativePlugin('dom')
+	import arr1To2 from "@/utils/utils.js"
 	export default {
 		data() {
 			return {
-				
+				// 直播间状态
+				isPause : false,
+				statusBarHeight: 0,
+				scrollIntoView: "",
+				list: [],
+				gifts: [],
+				// 保存工具点击切换的状态
+				popupType: 'mode',
+				// 画质模式数据 推流视频模式，可取值：SD（标清）, HD（高清）, FHD（超清）。
+				modeList: [{
+						type: "SD",
+						desc: "标清"
+					},
+					{
+						type: "HD",
+						desc: "高清"
+					},
+					{
+						type: "FHD",
+						desc: "超清"
+					}
+				],
+				// 保存状态栏的高度
+				statusBarHeight: 0,
+				// 保存屏幕的高度
+				windowHeight: 0,
+				// 保存的推流方法的实例对象
+				content: null,
+				// 推流地址，支持RTMP协议。
+				url: '',
+				// 推流视频模式，可取值：SD（标清）, HD（高清）, FHD（超清）
+				mode: 'SD',
+				// 是否静音。
+				muted: false,
+				// 	开启摄像头
+				enableCamera: true,
+				// 自动聚集
+				autoFocus: true,
+				// 美颜，取值范围 0-9（iOS取值范围为1） ，0 表示关闭。
+				beauty: 0,
+				// 美白，取值范围 0-9（iOS取值范围为1） ，0 表示关闭。
+				whiteness: 0,
+				// 前置或后置，值为front, back
+				devicePosition: "front",
+				// 定义底部菜单的数据
+				btns: [{
+					name: "翻转",
+					icon: "\ue605",
+					event : "handleSwitchCamera"
+				}, {
+					name: "画质",
+					icon: "\ue60c",
+					event : "handleOpenPopup",
+					params : "mode"
+				}, {
+					name: "美颜",
+					icon: "\ue632",
+					event : "handleOpenPopup",
+					params : "beauty"
+				}, {
+					name: "美白",
+					icon: "\ue631",
+					event : "handleOpenPopup",
+					params : "whiteness"
+				}, {
+					name: "更多",
+					icon: "\ue84b",
+					event : "handleOpenPopup",
+					params : "more"
+				}]
+			}
+		},
+		onLoad() {
+			// 获取状态栏的高度
+			const res = uni.getSystemInfoSync()
+			this.statusBarHeight = res.statusBarHeight
+			this.windowHeight = res.windowHeight
+		},
+		onReady() {
+			this.context = uni.createLivePusherContext('livePusher', this);
+			this.startPreview()
+		},
+		computed: {
+			popupTitle() {
+				const titleType = {
+					mode: '画质',
+					beauty: "美颜",
+					whiteness: "美白",
+					more : "更多"
+				}
+				return titleType[this.popupType]
 			}
 		},
 		methods: {
-			
+			// 底部菜单按钮点击执行的方法
+			handleBottomEvent(item){
+				console.log("===>",item)
+				this[item.event](item.params)
+			},
+
+			// 滚动条滚动到底部
+			toBottom() {
+				setTimeout(() => {
+					// 获取list数组的长度
+					let len = this.list.length
+					// 判断数组是否有数据 以及 能否得到最后一条数据
+					if (len > 0 && this.list[len - 1]) {
+						// 如果能得到的话就通过scrollIntoView 滚动到对应元素的位置
+						this.scrollIntoView = 'danmu' + this.list[len - 1].id
+					}
+				}, 2000)
+			},
+
+			// 礼物数据滚动到底部
+			toGiftBottom() {
+				this.$nextTick(() => {
+					// 获取礼物数组的最后一条数据的下标  5 4
+					let index = this.gifts.length - 1;
+					// 拿到最后一条数据的ref的名称
+					let ref = 'item' + index;
+					// 滚动到对应的元素位置
+					dom.scrollToElement(this.$refs[ref][0], {})
+				})
+
+			},
+
+			// 礼物自动消失方法
+			autoHide() {
+				if (this.gifts.length) {
+					let timer = setTimeout(() => {
+						this.gifts.splice(0, 1);
+					}, 2000)
+				}
+			},
+
+			// 设置美颜和美白
+			handleSliderChange(e) {
+				this[this.popupType] = e.detail.value
+			},
+			// 选择画质
+			handleChooseMode(item) {
+				this.mode = item.type
+				this.$refs.popup.close()
+				uni.showToast({
+					title: '画质切换为' + item.desc,
+					icon: "none"
+				})
+			},
+			// 打开弹出层
+			handleOpenPopup(value) {
+				this.popupType = value
+				this.$refs.popup.open('bottom')
+			},
+			// 关闭弹出层
+			handleClosePopup() {
+				this.$refs.popup.close()
+			},
+			// 切换相机摄像头方法
+			handleSwitchCamera() {
+				this.context.switchCamera({
+					success: () => {
+						uni.showToast({
+							title: "摄像头切换成功",
+							icon: "none"
+						})
+					}
+				})
+			},
+			//开启预览
+			startPreview() {
+				this.context.startPreview({
+					success: function(e) {
+						console.log(e)
+					}
+				});
+			},
+			// 监听直播状态发生变化触发的方法
+			statechange(e) {
+				console.log("1")
+				console.log(e);
+			},
+			// 监听直播间网络状态发生变化会触发的方法
+			netstatus(e) {
+				console.log("2")
+				console.log(e);
+			},
+			// 监听发生渲染错误会触发的方法
+			error(e) {
+				console.log("3")
+				console.log(e);
+			}
 		}
 	}
 </script>
 
 <style>
+	.page,
+	.video {
+		flex: 1;
+	}
 
+	.status-bar {
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+	}
+
+	.footer {
+		height: 125rpx;
+		/* padding : 0 20rpx; */
+		background-color: yellow;
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		right: 0;
+	}
+
+	.demo {
+		position: absolute;
+		height: 80rpx;
+		width: 80rpx;
+		background-color: red;
+	}
 </style>

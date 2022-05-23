@@ -15,6 +15,8 @@
 					url: "/pages/create-live/create-live"
 				})
 			})
+			
+			this.$store.dispatch("init")
 		},
 		onShow: function() {
 			console.log('App Show')
